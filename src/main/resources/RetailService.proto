@@ -1,0 +1,59 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package lk.iit.retail.grpc.generated;
+
+message UpdateCatalogueRequest {
+  string catalogueId = 1;
+  int32 updateQuantity = 2;
+}
+
+message UpdateCatalogueResponse {
+  bool isUpdate = 1;
+}
+
+service UpdateCatalogueService {
+  rpc updateCatalogue(UpdateCatalogueRequest) returns (UpdateCatalogueResponse);
+}
+
+message GetCatalogueRequest {
+}
+
+message Catalogue {
+  int32 id = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
+
+message GetCatalogueResponse {
+  repeated Catalogue catalogues = 1;
+}
+
+service GetCatalogueService {
+  rpc getCatalogue(GetCatalogueRequest) returns (GetCatalogueResponse);
+}
+
+message AddShoppingCartRequest {
+  int32 catalogueId = 1;
+  int32 quantity = 2;
+  int32 shopperId = 3;
+}
+
+message AddShoppingCartResponse {
+  bool isUpdated = 1;
+}
+
+service AddShoppingCartService {
+  rpc addShoppingCart(AddShoppingCartRequest) returns (AddShoppingCartResponse);
+}
+
+message CheckoutRequest {
+  int32 shopperId = 1;
+}
+
+message CheckoutResponse {
+  bool isCheckout = 1;
+}
+
+service CheckoutCartService {
+  rpc checkoutCart(CheckoutRequest) returns (CheckoutResponse);
+}
