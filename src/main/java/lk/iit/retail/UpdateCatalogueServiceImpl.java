@@ -5,16 +5,17 @@ import lk.iit.retail.grpc.generated.UpdateCatalogueRequest;
 import lk.iit.retail.grpc.generated.UpdateCatalogueResponse;
 import lk.iit.retail.grpc.generated.UpdateCatalogueServiceGrpc;
 import lk.iit.retail.model.Catalogue;
+import org.apache.zookeeper.KeeperException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.UpdateCatalogueServiceImplBase {
-
+    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
     private static List<Catalogue> catalogueList = new ArrayList<>();
     Random random = new Random();
+    public static final String ZOOKEEPER_URL = "127.0.0.1:2181";
 
     public UpdateCatalogueServiceImpl() {
         addDummyValues();
@@ -30,13 +31,33 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
         if (updateCatalogueOptional.isPresent()) {
             Catalogue updateCatalogue = updateCatalogueOptional.get();
             System.out.println(" update catalogue : " + updateCatalogue.toString());
-//            int addQuantity = this.random.nextInt(50);
             System.out.println("Add new quantity: " + addQuantity);
+            DistributedLock.setZooKeeperURL(ZOOKEEPER_URL);
+            DistributedLock lock = null;
+            try {
+                lock = new DistributedLock("update-catalogue");
+                lock.acquireLock();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            System.out.println("distributed lock created for update catalogue operation " + getCurrentTimeStamp());
             int newQuantity = updateCatalogue.getQuantity() + addQuantity;
             updateCatalogue.setQuantity(newQuantity);
             catalogueList.remove(updateCatalogue.getId());
             catalogueList.add(updateCatalogue.getId(), updateCatalogue);
+            try {
+                lock.releaseLock();
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Releasing the lock for update catalogue operation " + getCurrentTimeStamp());
             isUpdate = true;
         } else {
             System.out.println("update record is not available " + catalogueId);
@@ -72,5 +93,9 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
 
     public static List<Catalogue> getCatalogueList() {
         return catalogueList;
+    }
+
+    private static String getCurrentTimeStamp() {
+        return timeFormat.format(new Date(System.currentTimeMillis()));
     }
 }
