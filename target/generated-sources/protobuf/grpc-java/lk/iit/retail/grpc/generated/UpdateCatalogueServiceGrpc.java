@@ -1,9 +1,5 @@
 package lk.iit.retail.grpc.generated;
 
-import org.apache.zookeeper.KeeperException;
-
-import java.io.IOException;
-
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
