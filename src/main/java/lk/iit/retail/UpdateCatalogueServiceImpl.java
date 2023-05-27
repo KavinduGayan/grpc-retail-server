@@ -1,6 +1,8 @@
 package lk.iit.retail;
 
 import io.grpc.stub.StreamObserver;
+import lk.iit.EtcdClient;
+import lk.iit.retail.client.UpdateCatalogueServiceClient;
 import lk.iit.retail.grpc.generated.UpdateCatalogueRequest;
 import lk.iit.retail.grpc.generated.UpdateCatalogueResponse;
 import lk.iit.retail.grpc.generated.UpdateCatalogueServiceGrpc;
@@ -16,6 +18,7 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
     private static List<Catalogue> catalogueList = new ArrayList<>();
     Random random = new Random();
     public static final String ZOOKEEPER_URL = "127.0.0.1:2181";
+    private List<String> nodes = Arrays.asList("node1", "node2");//TODO
 
     public UpdateCatalogueServiceImpl() {
         addDummyValues();
@@ -23,15 +26,36 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
 
     @Override
     public void updateCatalogue(UpdateCatalogueRequest request, StreamObserver<UpdateCatalogueResponse> responseObserver) {
-        String catalogueId = request.getCatalogueId();
-        int addQuantity = request.getUpdateQuantity();
+        boolean isUpdate = updateCatalogue(request.getCatalogueId(), request.getUpdateQuantity());
+        if (isUpdate) {
+            for (String node : nodes) {
+                String endpoint = getEndPoint(node);
+                UpdateCatalogueServiceClient updateCatalogueServiceClient = new UpdateCatalogueServiceClient(endpoint.split(":")[0], Integer.parseInt(endpoint.split(":")[1]));
+                updateCatalogueServiceClient.initializeConnection();
+                try {
+                    updateCatalogueServiceClient.processUserRequests();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                updateCatalogueServiceClient.closeConnection();
+            }
+        }
+        UpdateCatalogueResponse updateCatalogueResponse = UpdateCatalogueResponse
+                .newBuilder()
+                .setIsUpdate(isUpdate)
+                .build();
+        responseObserver.onNext(updateCatalogueResponse);
+        responseObserver.onCompleted();
+    }
+
+    public boolean updateCatalogue(String catalogueId, int updateQuantity) {
         boolean isUpdate = false;
         System.out.println("Request received.. catalogue id " + catalogueId);
         Optional<Catalogue> updateCatalogueOptional = getCatalogueById(Integer.parseInt(catalogueId));
         if (updateCatalogueOptional.isPresent()) {
             Catalogue updateCatalogue = updateCatalogueOptional.get();
             System.out.println(" update catalogue : " + updateCatalogue.toString());
-            System.out.println("Add new quantity: " + addQuantity);
+            System.out.println("Add new quantity: " + updateQuantity);
             DistributedLock.setZooKeeperURL(ZOOKEEPER_URL);
             DistributedLock lock = null;
             try {
@@ -46,7 +70,7 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
             }
 
             System.out.println("distributed lock created for update catalogue operation " + getCurrentTimeStamp());
-            int newQuantity = updateCatalogue.getQuantity() + addQuantity;
+            int newQuantity = updateCatalogue.getQuantity() + updateQuantity;
             updateCatalogue.setQuantity(newQuantity);
             catalogueList.remove(updateCatalogue.getId());
             catalogueList.add(updateCatalogue.getId(), updateCatalogue);
@@ -62,12 +86,7 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
         } else {
             System.out.println("update record is not available " + catalogueId);
         }
-        UpdateCatalogueResponse updateCatalogueResponse = UpdateCatalogueResponse
-                .newBuilder()
-                .setIsUpdate(isUpdate)
-                .build();
-        responseObserver.onNext(updateCatalogueResponse);
-        responseObserver.onCompleted();
+        return isUpdate;
     }
 
     public Optional<Catalogue> getCatalogueById(int id) {
@@ -89,6 +108,12 @@ public class UpdateCatalogueServiceImpl extends UpdateCatalogueServiceGrpc.Updat
             catalogue.setQuantity(i * 5);
             catalogueList.add(catalogue);
         }
+    }
+
+    private static String getEndPoint(String serverName) {
+        EtcdClient client = new EtcdClient();
+        client.setEtcdUrl("http://localhost:2379");
+        return client.getEtcdKVClient(serverName);
     }
 
     public static List<Catalogue> getCatalogueList() {

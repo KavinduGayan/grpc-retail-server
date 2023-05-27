@@ -57,3 +57,16 @@ message CheckoutResponse {
 service CheckoutCartService {
   rpc checkoutCart(CheckoutRequest) returns (CheckoutResponse);
 }
+
+message NotifyRequest {
+  int32 notifyType = 1;
+  string notifyPayload = 2;
+}
+
+message NotifyResponse {
+  bool isUpdate = 1;
+}
+
+service UpdateNotifyService {
+  rpc updateNotifyService(NotifyRequest) returns (NotifyResponse);
+}

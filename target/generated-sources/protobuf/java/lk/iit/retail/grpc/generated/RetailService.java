@@ -59,6 +59,16 @@ public final class RetailService {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_lk_iit_retail_grpc_generated_CheckoutResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lk_iit_retail_grpc_generated_NotifyRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lk_iit_retail_grpc_generated_NotifyRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_lk_iit_retail_grpc_generated_NotifyResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_lk_iit_retail_grpc_generated_NotifyResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -81,22 +91,28 @@ public final class RetailService {
       "\tshopperId\030\003 \001(\005\",\n\027AddShoppingCartRespo" +
       "nse\022\021\n\tisUpdated\030\001 \001(\010\"$\n\017CheckoutReques" +
       "t\022\021\n\tshopperId\030\001 \001(\005\"&\n\020CheckoutResponse" +
-      "\022\022\n\nisCheckout\030\001 \001(\0102\230\001\n\026UpdateCatalogue" +
-      "Service\022~\n\017updateCatalogue\0224.lk.iit.reta" +
-      "il.grpc.generated.UpdateCatalogueRequest" +
-      "\0325.lk.iit.retail.grpc.generated.UpdateCa" +
-      "talogueResponse2\214\001\n\023GetCatalogueService\022" +
-      "u\n\014getCatalogue\0221.lk.iit.retail.grpc.gen" +
-      "erated.GetCatalogueRequest\0322.lk.iit.reta" +
-      "il.grpc.generated.GetCatalogueResponse2\230" +
-      "\001\n\026AddShoppingCartService\022~\n\017addShopping" +
-      "Cart\0224.lk.iit.retail.grpc.generated.AddS" +
-      "hoppingCartRequest\0325.lk.iit.retail.grpc." +
-      "generated.AddShoppingCartResponse2\204\001\n\023Ch" +
-      "eckoutCartService\022m\n\014checkoutCart\022-.lk.i" +
-      "it.retail.grpc.generated.CheckoutRequest" +
-      "\032..lk.iit.retail.grpc.generated.Checkout" +
-      "ResponseB\002P\001b\006proto3"
+      "\022\022\n\nisCheckout\030\001 \001(\010\":\n\rNotifyRequest\022\022\n" +
+      "\nnotifyType\030\001 \001(\005\022\025\n\rnotifyPayload\030\002 \001(\t" +
+      "\"\"\n\016NotifyResponse\022\020\n\010isUpdate\030\001 \001(\0102\230\001\n" +
+      "\026UpdateCatalogueService\022~\n\017updateCatalog" +
+      "ue\0224.lk.iit.retail.grpc.generated.Update" +
+      "CatalogueRequest\0325.lk.iit.retail.grpc.ge" +
+      "nerated.UpdateCatalogueResponse2\214\001\n\023GetC" +
+      "atalogueService\022u\n\014getCatalogue\0221.lk.iit" +
+      ".retail.grpc.generated.GetCatalogueReque" +
+      "st\0322.lk.iit.retail.grpc.generated.GetCat" +
+      "alogueResponse2\230\001\n\026AddShoppingCartServic" +
+      "e\022~\n\017addShoppingCart\0224.lk.iit.retail.grp" +
+      "c.generated.AddShoppingCartRequest\0325.lk." +
+      "iit.retail.grpc.generated.AddShoppingCar" +
+      "tResponse2\204\001\n\023CheckoutCartService\022m\n\014che" +
+      "ckoutCart\022-.lk.iit.retail.grpc.generated" +
+      ".CheckoutRequest\032..lk.iit.retail.grpc.ge" +
+      "nerated.CheckoutResponse2\207\001\n\023UpdateNotif" +
+      "yService\022p\n\023updateNotifyService\022+.lk.iit" +
+      ".retail.grpc.generated.NotifyRequest\032,.l" +
+      "k.iit.retail.grpc.generated.NotifyRespon" +
+      "seB\002P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -156,6 +172,18 @@ public final class RetailService {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_lk_iit_retail_grpc_generated_CheckoutResponse_descriptor,
         new java.lang.String[] { "IsCheckout", });
+    internal_static_lk_iit_retail_grpc_generated_NotifyRequest_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_lk_iit_retail_grpc_generated_NotifyRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lk_iit_retail_grpc_generated_NotifyRequest_descriptor,
+        new java.lang.String[] { "NotifyType", "NotifyPayload", });
+    internal_static_lk_iit_retail_grpc_generated_NotifyResponse_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_lk_iit_retail_grpc_generated_NotifyResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_lk_iit_retail_grpc_generated_NotifyResponse_descriptor,
+        new java.lang.String[] { "IsUpdate", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
